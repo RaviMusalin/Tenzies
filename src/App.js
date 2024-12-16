@@ -22,7 +22,7 @@ export default function App() {
             .map(() => Math.ceil(Math.random() * 6))
     }
 
-    let diceElements = dice.map(num => <Die value={dice[num]}/>)
+    let diceElements = dice.map(num => <Die value={num}/>)
 
     return (
         <main>

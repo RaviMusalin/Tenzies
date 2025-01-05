@@ -3,33 +3,39 @@ import { useState } from "react"
 import { nanoid } from "nanoid"
 
 /**
-     * Challenge: Add conditional styling to the Die component
-     * so that if it's held (isHeld === true), its background color
-     * changes to a light green (#59E391)
-     * 
-     * Remember: currently the Die component has no way of knowing
-     * if it's "held" or not.
+     * Challenge part 2:
+     * 1. Create a new `gameWon` variable.
+     * 2. If `gameWon` is true, change the button text to
+     *    "New Game" instead of "Roll"
      */
 
 export default function App() {
     const [dice, setDice] = useState(generateAllNewDice())
 
+    const gameWon = dice.every(die => die.isHeld) && dice.every(die => die.value === dice[0].value)
+      
     function generateAllNewDice() {
         return new Array(10)
             .fill(0)
             .map(() => ({
                     value: Math.ceil(Math.random() * 6), 
-                    isHeld: true,
+                    isHeld: false,
                     id: nanoid()
                 }))
     }
 
     function rollDice() {
-        setDice(generateAllNewDice())
+        setDice(oldDice => oldDice.map(die => 
+            die.isHeld ?
+                die :
+                { ...die, value: Math.ceil(Math.random() * 6) }
+        ))
     }
 
     function hold(id) {
-        console.log(id)
+        setDice(oldDice => oldDice.map(die => {
+                return die.id === id ? {...die, isHeld: !die.isHeld} : die
+            }))
     }
 
     let diceElements = dice.map(dieObj => 
@@ -44,13 +50,14 @@ export default function App() {
 
     return (
         <main>
+            <h1 className="title">Tenzies</h1>
+            <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
             <div className="dice-container">
                 {diceElements}
             </div>
-
             <button className="roll-dice" onClick={rollDice}>
-                Roll
-            </button>
+                {gameWon ? "New Game" : "Roll"}
+                </button>
         </main>
     )
 }
